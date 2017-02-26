@@ -50,9 +50,9 @@ except:
 
     except:
         traceback.print_exc()
-        print(u'読み込みエラー')
+        print('load config failed')
         sys.exit(-1)
-print(u'読み込み成功')
+print('load config success')
 
 line_bot_api = LineBotApi(line_messaging_api_token)
 handler = WebhookHandler(line_messaging_api_secret)
