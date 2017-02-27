@@ -139,8 +139,6 @@ def handle_text_message(event):
     f = open("lchika.json", "r")
     user_dict = json.load(f)
     f.close()
-    print 'user_dict'
-    print user_dict
 
     if(event.message.text[0] == cmd_prefix):
         print('command received')
@@ -381,7 +379,8 @@ def handle_beacon_message(event):
     _id = event.source.user_id
     reply_msgs = []
     hwid = event.beacon.hwid
-    print 'hwid:{}'.format(hwid)
+    # print 'hwid:{}'.format(hwid)
+    print event.beacon
 
     f = open("lchika.json","r")
     user_dict = json.load(f)
@@ -401,7 +400,6 @@ def handle_beacon_message(event):
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
     user_dict[_id] = hwids
-    print user_dict
     f = open("lchika.json","w")
     json.dump(user_dict, f)
     f.close()
