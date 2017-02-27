@@ -166,15 +166,15 @@ def handle_text_message(event):
                             actions=[
                                 PostbackTemplateAction(
                                     label='速い',
-                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 1})
                                 ),
                                 PostbackTemplateAction(
                                     label='遅い',
-                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 1})
                                 ),
                                 PostbackTemplateAction(
                                     label='止める',
-                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                    data=json.dumps({'cmd': 'stop_rainbow'})
                                 ),
                             ]
                         ),
@@ -349,6 +349,9 @@ def handle_postback_message(event):
         pass
     elif data.get('cmd') == 'start_rainbow':
         led.start_rainbow_flow(50, 100, data['speed'])
+
+    elif data.get('cmd') == 'stop_rainbow':
+        led.stop_rainbow_flow()
 
     elif data.get('cmd') == 'clear':
         led.clear(50, led.rgb2str([data['color']]))
