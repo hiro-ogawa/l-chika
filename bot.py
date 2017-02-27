@@ -461,7 +461,7 @@ def handle_postback_message(event):
     elif cmd == 'show_sinage_url':
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
         for hwid in beacons:
-            reply_msgs.append(TextSendMessage(text=u'IDはこれを入れてね\n{}'.format(beacon_dict(hwid))))
+            reply_msgs.append(TextSendMessage(text=u'IDはこれを入れてね\n{}'.format(beacon_dict.get(hwid, 'ID0001'))))
 
     elif cmd == 'take_photo':
         reply_msgs.append(TextSendMessage(text=u'写真撮ったよ〜'))
