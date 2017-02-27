@@ -166,7 +166,7 @@ def handle_text_message(event):
                             actions=[
                                 PostbackTemplateAction(
                                     label='速い',
-                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 1})
+                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 10})
                                 ),
                                 PostbackTemplateAction(
                                     label='遅い',
@@ -232,6 +232,25 @@ def handle_text_message(event):
                                 PostbackTemplateAction(
                                     label='緑っぽい',
                                     data=json.dumps({'cmd': 'clear', 'color': [0, 100, 255]})
+                                ),
+                            ]
+                        ),
+                        CarouselColumn(
+                            # thumbnail_image_url='https://example.com/item1.jpg',
+                            # title='this is menu1',
+                            text='その他',
+                            actions=[
+                                PostbackTemplateAction(
+                                    label='白',
+                                    data=json.dumps({'cmd': 'clear', 'color': [255, 255, 255]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='消す',
+                                    data=json.dumps({'cmd': 'clear', 'color': [0, 0, 0]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='　',
+                                    data=json.dumps({})
                                 ),
                             ]
                         ),
@@ -345,15 +364,16 @@ def handle_postback_message(event):
     data = json.loads(event.postback.data)
     print data
 
+    cmd = data.get('cmd')
     if False:
         pass
-    elif data.get('cmd') == 'start_rainbow':
+    elif cmd == 'start_rainbow':
         led.start_rainbow_flow(50, 100, data['speed'])
 
-    elif data.get('cmd') == 'stop_rainbow':
+    elif cmd == 'stop_rainbow':
         led.stop_rainbow_flow()
 
-    elif data.get('cmd') == 'clear':
+    elif cmd == 'clear':
         led.clear(50, led.rgb2str([data['color']]))
 
     if event.postback.data == 'led:red':
