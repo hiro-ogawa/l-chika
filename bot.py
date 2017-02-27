@@ -16,6 +16,18 @@ import metadata_api as mapi
 
 app = Flask(__name__)
 
+beacon_dict = {
+    '01002e6fd4': 'WD001',
+    '01013523b2': 'CH001',
+    '0101372b60': 'VL001',
+    '01013ae20c': 'WD002',
+    '01013aebc1': 'CH002',
+    '01013bc66a': 'VL002',
+    '000001939f': 'WD003',
+    '0000000000': 'WD004',
+}
+user_dict = {}
+
 # 環境変数が見つかればそっちを読む
 # 見つからなければjsonファイルを読む
 # なければエラー終了
@@ -130,6 +142,12 @@ def handle_text_message(event):
         if False:
             pass
         elif cmd == u'イルミネーション':
+            hwids = user_dict.get(_id,[])
+            if len(hwids) == 0:
+                reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
+                send_msgs(reply_msgs, reply_token=event.reply_token)
+                return
+
             reply_msgs.append(TemplateSendMessage(
                 alt_text=u'色選択',
                 template=CarouselTemplate(
@@ -235,6 +253,11 @@ def handle_text_message(event):
 
             ))
         elif cmd == u'サイネージ':
+            hwids = user_dict.get(_id,[])
+            if len(hwids) == 0:
+                reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
+                send_msgs(reply_msgs, reply_token=event.reply_token)
+                return
             reply_msgs.append(TemplateSendMessage(
                 alt_text=u'サイネージ（メニュー画面）',
                 template=ButtonsTemplate(
@@ -252,6 +275,11 @@ def handle_text_message(event):
                 )
             ))
         elif cmd == u'記念撮影':
+            hwids = user_dict.get(_id,[])
+            if len(hwids) == 0:
+                reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
+                send_msgs(reply_msgs, reply_token=event.reply_token)
+                return
             reply_msgs.append(TemplateSendMessage(
                 alt_text=u'記念撮影メニュー',
                 template=ButtonsTemplate(
@@ -343,20 +371,29 @@ def handle_audio_message(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
+    _id = event.source.user_id
     reply_msgs = []
-    print 'hwid:{}'.format(event.beacon.hwid)
+    hwid = event.beacon.hwid
+    print 'hwid:{}'.format(hwid)
 
     if event.beacon.type == 'enter':
-        reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポットへ'))
+        reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポット{}へ'.format(beacon_dict.get(hwid, 'ID0001'))))
+        if hwid not in user_dict.get(_id, []):
+            user_dict[_id] = user_dict.get(_id, []).append(hwid)
 
     elif event.beacon.type == 'leave':
         reply_msgs.append(TextSendMessage(text=u'また来てね'))
+        if hwid in user_dict.get(_id, []):
+            user_dict[_id] = user_dict.get(_id, []).remove(hwid)
+
+    print user_dict
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
 
 @handler.add(PostbackEvent)
 def handle_postback_message(event):
+    _id = event.source.user_id
     reply_msgs = []
     data = json.loads(event.postback.data)
     print data
@@ -405,6 +442,7 @@ def handle_postback_message(event):
             ))
     elif cmd == 'show_sinage_url':
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
+        reply_msgs.append(TextSendMessage(text=u'IDはこれを入れてね\n{}'.format(hwids[0])))
 
     elif cmd == 'take_photo':
         reply_msgs.append(TextSendMessage(text=u'写真撮ったよ〜'))
@@ -413,6 +451,7 @@ def handle_postback_message(event):
             original_content_url = image_url,
             preview_image_url = image_url,
         ))
+        reply_msgs.append(TextSendMessage(text=u'これはダミーデータです'))
 
     elif cmd == 'take_video':
         reply_msgs.append(TextSendMessage(text=u'動画撮ったよ〜'))
@@ -421,7 +460,7 @@ def handle_postback_message(event):
             original_content_url = image_url,
             preview_image_url = image_url,
         ))
-        reply_msgs.append(TextSendMessage(text=u'これは動画に差し替えます'))
+        reply_msgs.append(TextSendMessage(text=u'これはダミーデータです'))
 
     elif event.postback.data == 'bgm:Jhon':
         reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
