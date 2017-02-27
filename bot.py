@@ -138,7 +138,7 @@ def handle_text_message(event):
     _id = event.source.user_id
     reply_msgs = []
 
-    f = open("lchika.json")
+    f = open("lchika.json", "r")
     user_dict = json.load(f)
     f.close()
 
@@ -383,7 +383,7 @@ def handle_beacon_message(event):
     hwid = event.beacon.hwid
     print 'hwid:{}'.format(hwid)
 
-    f = open("lchika.json")
+    f = open("lchika.json","r")
     user_dict = json.load(f)
     f.close()
 
@@ -399,7 +399,7 @@ def handle_beacon_message(event):
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
-    f = open("lchika.json")
+    f = open("lchika.json","w")
     json.dump(user_dict, f, indent=2, sort_keys=True, separators=(',', ': '))
     f.close()
 
