@@ -342,7 +342,7 @@ def handle_text_message(event):
             if post:
                 reply_msgs.append(TextSendMessage(text=u"投稿したよ"))
                 for hwid in beacons:
-                    sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name), beacon_dict(hwid))
+                    sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name), beacon_dict.get(hwid, 'ID0001'))
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
