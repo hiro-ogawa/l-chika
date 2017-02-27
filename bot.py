@@ -410,6 +410,11 @@ def handle_postback_message(event):
     data = json.loads(event.postback.data)
     print data
 
+    f = open("lchika.json", "r")
+    user_dict = json.load(f)
+    f.close()
+    beacons = user_dict.get(_id,[])
+
     cmd = data.get('cmd')
     if False:
         pass
