@@ -408,7 +408,7 @@ def handle_postback_message(event):
 
     elif cmd == 'take_photo':
         reply_msgs.append(TextSendMessage(text=u'写真取ったよ〜'))
-        iamge_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
+        image_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
         reply_msgs.append(ImageSendMessage(
             original_content_url = image_url,
             preview_image_url = image_url,
@@ -416,7 +416,7 @@ def handle_postback_message(event):
 
     elif cmd == 'take_video':
         reply_msgs.append(TextSendMessage(text=u'ビデオ取ったよ〜'))
-        iamge_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
+        image_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
         reply_msgs.append(ImageSendMessage(
             original_content_url = image_url,
             preview_image_url = image_url,
