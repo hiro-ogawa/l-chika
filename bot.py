@@ -400,6 +400,7 @@ def handle_beacon_message(event):
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
+    print user_dict
     f = open("lchika.json","w")
     json.dump(user_dict, f, indent=2, sort_keys=True, separators=(',', ': '))
     f.close()
