@@ -129,31 +129,6 @@ def handle_text_message(event):
 
         if False:
             pass
-        elif cmd == u'色を変える':
-            reply_msgs.append(TemplateSendMessage(
-                alt_text=u'ツリーの光の色を選んでね（メニュー画面）',
-                template=ButtonsTemplate(
-                    text=u'ツリーの光の色を選んでね',
-                    actions=[
-                        PostbackTemplateAction(
-                            label=u'赤(Red)',
-                            data='led:red'
-                        ),
-                        PostbackTemplateAction(
-                            label=u'緑(Green)',
-                            data='led:green'
-                        ),
-                        PostbackTemplateAction(
-                            label=u'青(Blue)',
-                            data='led:blue'
-                        ),
-                        PostbackTemplateAction(
-                            label=u'レインボー(Rainbow)',
-                            data='led:rainbow'
-                        ),
-                    ]
-                )
-            ))
         elif cmd == u'イルミネーション':
             reply_msgs.append(TemplateSendMessage(
                 alt_text=u'色選択',
@@ -170,7 +145,7 @@ def handle_text_message(event):
                                 ),
                                 PostbackTemplateAction(
                                     label='遅い',
-                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 1})
+                                    data=json.dumps({'cmd': 'start_rainbow', 'speed': 2})
                                 ),
                                 PostbackTemplateAction(
                                     label='止める',
@@ -267,11 +242,11 @@ def handle_text_message(event):
                     actions=[
                         PostbackTemplateAction(
                             label=u'音楽を変える',
-                            data='sinage:chenge_music'
+                            data=json.dumps({'cmd': 'change_music'})
                         ),
                         PostbackTemplateAction(
                             label=u'URLを知りたい',
-                            data='sinage:show_url'
+                            data=json.dumps({'cmd': 'show_sinage_url'})
                         ),
                     ]
                 )
@@ -284,12 +259,8 @@ def handle_text_message(event):
                     text=u'どうする？',
                     actions=[
                         PostbackTemplateAction(
-                            label=u'消す',
-                            data='led:black'
-                        ),
-                        PostbackTemplateAction(
                             label=u'友達リンク',
-                            data='show:friends_link'
+                            data=json.dumps({'cmd': 'show_friends_link'})
                         ),
                     ]
                 )
@@ -376,51 +347,39 @@ def handle_postback_message(event):
     elif cmd == 'clear':
         led.clear(50, led.rgb2str([data['color']]))
 
-    if event.postback.data == 'led:red':
-        reply_msgs.append(TextSendMessage(text=u'ツリーの光を赤にするよ'))
-        led.clear(50, led.rgb2str([[255,0,0]]))
-
-    elif event.postback.data == 'led:green':
-        reply_msgs.append(TextSendMessage(text=u'ツリーの光を緑にするよ'))
-        led.clear(50, led.rgb2str([[0,255,0]]))
-
-    elif event.postback.data == 'led:blue':
-        reply_msgs.append(TextSendMessage(text=u'ツリーの光を青にするよ'))
-        led.clear(50, led.rgb2str([[0,0,255]]))
-
-    elif event.postback.data == 'led:black':
-        reply_msgs.append(TextSendMessage(text=u'ツリーの光を消したよ'))
-        led.clear(50, led.rgb2str([[0,0,0]]))
-
-    elif event.postback.data == 'led:rainbow':
-        reply_msgs.append(TextSendMessage(text=u'ツリーの光をレインボーに光らせたよ'))
-        led.start_rainbow_flow(50, 100, 5)
-
-    elif event.postback.data == 'show:friends_link':
+    elif cmd == 'show_friends_link':
         reply_msgs.append(TextSendMessage(text = u'友達になるためのリンクだよ\nみんなに紹介してね'))
         reply_msgs.append(TextSendMessage(text = line_friend_url))
         img_url = line_qr_url
         msgs.append(ImageSendMessage(original_content_url=img_url, preview_image_url=img_url))
 
-    elif event.postback.data == 'sinage:chenge_music':
-        reply_msgs.append(TemplateSendMessage(
-            alt_text=u'音楽を選ぶ（メニュー画面）',
-            template=ButtonsTemplate(
-                text=u'音楽は何がいい？',
-                actions=[
-                    PostbackTemplateAction(
-                        label=u'ハッピー・クリスマス',
-                        data='bgm:Jhon'
-                    ),
-                    PostbackTemplateAction(
-                        label=u'恋人たちのクリスマス',
-                        data='bgm:Mariah'
-                    ),
-                ]
-            )
-        ))
-    elif event.postback.data == 'sinage:show_url':
+    elif cmd == 'change_music':
+        fname = data.get('fname')
+
+        if fname:
+            reply_msgs.append(TextSendMessage(text=u'曲を変えたよ'))
+            sinage.PostNewBGM(fname)
+
+        else:
+            reply_msgs.append(TemplateSendMessage(
+                alt_text=u'音楽を選ぶ（メニュー画面）',
+                template=ButtonsTemplate(
+                    text=u'音楽は何がいい？',
+                    actions=[
+                        PostbackTemplateAction(
+                            label=u'ハッピー・クリスマス',
+                            data=json.dumps({'cmd': cmd, 'fname': 'happychrismas.mp3'})
+                        ),
+                        PostbackTemplateAction(
+                            label=u'恋人たちのクリスマス',
+                            data=json.dumps({'cmd': cmd, 'fname': 'christmas.mp3'})
+                        ),
+                    ]
+                )
+            ))
+    elif cmd == 'show_sinage_url':
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
+
     elif event.postback.data == 'bgm:Jhon':
         reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
         sinage.PostNewBGM('happychrismas.mp3')
