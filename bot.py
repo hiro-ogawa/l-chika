@@ -343,6 +343,8 @@ def handle_beacon_message(event):
 def handle_postback_message(event):
     reply_msgs = []
     data = json.loads(event.postback.data)
+    print data
+
     if False:
         pass
     elif data.get('cmd') == 'start_rainbow':
