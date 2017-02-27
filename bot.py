@@ -251,10 +251,27 @@ def handle_text_message(event):
                     ]
                 )
             ))
+        elif cmd == u'記念撮影':
+            reply_msgs.append(TemplateSendMessage(
+                alt_text=u'記念撮影メニュー',
+                template=ButtonsTemplate(
+                    text=u'どうする？',
+                    actions=[
+                        PostbackTemplateAction(
+                            label=u'写真',
+                            data=json.dumps({'cmd': 'take_photo'})
+                        ),
+                        PostbackTemplateAction(
+                            label=u'動画',
+                            data=json.dumps({'cmd': 'take_video'})
+                        ),
+                    ]
+                )
+            ))
 
         elif cmd == u'設定':
             reply_msgs.append(TemplateSendMessage(
-                alt_text=u'設定（メニュー画面）',
+                alt_text=u'設定メニュー',
                 template=ButtonsTemplate(
                     text=u'どうする？',
                     actions=[
@@ -277,14 +294,21 @@ def handle_text_message(event):
         else:
             ret_np = mapi.negaposi(event.message.text)
             text = u'認識結果：{}\nネガポジ：{}'.format(ret_np["analyzed_text"], ret_np["negaposi"])
-            reply_msgs.append(TextSendMessage(text=text))
+            # reply_msgs.append(TextSendMessage(text=text))
             ret_em = mapi.emotion(event.message.text)
             text = u'認識結果：{}\n好嫌：{}\n嬉悲：{}\n怒恐：{}'.format(ret_em["analyzed_text"], ret_em["likedislike"], ret_em["joysad"], ret_em["angerfear"])
-            reply_msgs.append(TextSendMessage(text=text))
+            # reply_msgs.append(TextSendMessage(text=text))
 
+            post = False
             if ret_np["negaposi"] < 0 or ret_em["likedislike"] < 0:
-                reply_msgs.append(TextSendMessage(text=u"あまりいい言葉じゃないみたい"))
+                reply_msgs.append(TextSendMessage(text=u"ちょっとネガティブ？"))
+            elif ret_np["negaposi"] > 0 or ret_em["likedislike"] > 0:
+                reply_msgs.append(TextSendMessage(text=u"いいメッセージだね"))
+                post = True
             else:
+                post = True
+
+            if post:
                 reply_msgs.append(TextSendMessage(text=u"投稿したよ"))
                 sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name))
 
@@ -320,7 +344,7 @@ def handle_audio_message(event):
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
     reply_msgs = []
-    print event.beacon.hwid
+    print 'hwid:{}'.format(event.beacon.hwid)
 
     if event.beacon.type == 'enter':
         reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポットへ'))
@@ -381,6 +405,22 @@ def handle_postback_message(event):
             ))
     elif cmd == 'show_sinage_url':
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
+
+    elif cmd == 'take_photo':
+        reply_msgs.append(TextSendMessage(text=u'写真取ったよ〜'))
+        iamge_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
+        reply_msgs.append(ImageSendMessage(
+            original_content_url = image_url,
+            preview_image_url = image_url,
+        ))
+
+    elif cmd == 'take_video':
+        reply_msgs.append(TextSendMessage(text=u'ビデオ取ったよ〜'))
+        iamge_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
+        reply_msgs.append(ImageSendMessage(
+            original_content_url = image_url,
+            preview_image_url = image_url,
+        ))
 
     elif event.postback.data == 'bgm:Jhon':
         reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
