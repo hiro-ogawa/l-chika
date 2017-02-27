@@ -79,18 +79,45 @@ def callback():
 
 def print_error(e):
     print(e.status_code)
-    print(e.error.message)
-    print(e.error.details)
+    # print(e.error.message)
+    # print(e.error.details)
 
-def print_profile(user_id):
-    try:
-        profile = line_bot_api.get_profile(user_id)
-        print(profile.display_name)
-        print(profile.user_id)
-        print(profile.picture_url)
-        print(profile.status_message)
-    except linebot.LineBotApiError as e:
-        print_error(e)
+
+def send_msgs(msgs, reply_token = None, uid = None, uids = None):
+    if not isinstance(msgs, (list, tuple)):
+        msgs = [msgs]
+    # 各メッセージの不要な改行の削除
+    for msg in msgs:
+        if msg.type == 'text':
+            while msg.text[-1] == '\n':
+                msg.text = msg.text[:-1]
+    # 空メッセージ削除
+    if TextSendMessage('') in msgs:
+        msgs.remove(TextSendMessage(''))
+
+    # メッセージがあれば送信
+    if len(msgs):
+        if len(msgs) > 5:
+            try:
+                if reply_token:
+                    line_bot_api.reply_message(reply_token, msgs[0:5])
+                if uid:
+                    line_bot_api.push_message(uid, msgs[0:5])
+                if uids:
+                    line_bot_api.multicast(uids, msgs[0:5])
+            except LineBotApiError as e:
+                print_error(e)
+            print 'len(msgs) > 5'
+        else:
+            try:
+                if reply_token:
+                    line_bot_api.reply_message(reply_token, msgs)
+                if uid:
+                    line_bot_api.push_message(uid, msgs)
+                if uids:
+                    line_bot_api.multicast(uids, msgs)
+            except LineBotApiError as e:
+                print_error(e)
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -126,6 +153,92 @@ def handle_text_message(event):
                         ),
                     ]
                 )
+            ))
+        elif cmd == u'イルミネーション':
+            reply_msgs.append(TemplateSendMessage(
+                alt_text=u'色選択',
+                template=CarouselTemplate(
+                    columns=[
+                        CarouselColumn(
+                            # thumbnail_image_url='https://example.com/item1.jpg',
+                            # title='this is menu1',
+                            text='レインボー',
+                            actions=[
+                                PostbackTemplateAction(
+                                    label='速い',
+                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                ),
+                                PostbackTemplateAction(
+                                    label='遅い',
+                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                ),
+                                PostbackTemplateAction(
+                                    label='止める',
+                                    data=json.dumps({'cmd': 'rainbow', 'speed': 1})
+                                ),
+                            ]
+                        ),
+                        CarouselColumn(
+                            # thumbnail_image_url='https://example.com/item1.jpg',
+                            # title='this is menu1',
+                            text='赤系',
+                            actions=[
+                                PostbackTemplateAction(
+                                    label='赤',
+                                    data=json.dumps({'cmd': 'clear', 'color': [255, 0, 0]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='緑っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [255, 100, 0]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='青っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [255, 0, 100]})
+                                ),
+                            ]
+                        ),
+                        CarouselColumn(
+                            # thumbnail_image_url='https://example.com/item1.jpg',
+                            # title='this is menu1',
+                            text='緑系',
+                            actions=[
+                                PostbackTemplateAction(
+                                    label='緑',
+                                    data=json.dumps({'cmd': 'clear', 'color': [0, 255, 0]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='赤っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [100, 255, 0]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='青っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [0, 255, 100]})
+                                ),
+                            ]
+                        ),
+                        CarouselColumn(
+                            # thumbnail_image_url='https://example.com/item1.jpg',
+                            # title='this is menu1',
+                            text='青系',
+                            actions=[
+                                PostbackTemplateAction(
+                                    label='青',
+                                    data=json.dumps({'cmd': 'clear', 'color': [0, 0, 255]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='赤っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [100, 0, 255]})
+                                ),
+                                PostbackTemplateAction(
+                                    label='緑っぽい',
+                                    data=json.dumps({'cmd': 'clear', 'color': [0, 100, 255]})
+                                ),
+                            ]
+                        ),
+
+                    ]
+                )
+
             ))
         elif cmd == u'サイネージ':
             reply_msgs.append(TemplateSendMessage(
@@ -185,8 +298,7 @@ def handle_text_message(event):
                 reply_msgs.append(TextSendMessage(text=u"投稿したよ"))
                 sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name))
 
-    if len(reply_msgs):
-        line_bot_api.reply_message(event.reply_token, reply_msgs)
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 def save_content(message_id, filename):
     message_content = line_bot_api.get_message_content(message_id)
@@ -217,24 +329,28 @@ def handle_audio_message(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
+    reply_msgs = []
     if event.beacon.type == 'enter':
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=u'ようこそLチカスポットへ'))
-
+        reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポットへ'))
 
     elif event.beacon.type == 'leave':
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=u'また来てね'))
+        reply_msgs.append(TextSendMessage(text=u'また来てね'))
 
-    else:
-        pass
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 
 @handler.add(PostbackEvent)
 def handle_postback_message(event):
     reply_msgs = []
+    data = json.loads(event.postback.data)
+    if False:
+        pass
+    elif data.get('cmd') == 'start_rainbow':
+        led.start_rainbow_flow(50, 100, data['speed'])
+
+    elif data.get('cmd') == 'clear':
+        led.clear(50, led.rgb2str([data['color']]))
+
     if event.postback.data == 'led:red':
         reply_msgs.append(TextSendMessage(text=u'ツリーの光を赤にするよ'))
         led.clear(50, led.rgb2str([[255,0,0]]))
