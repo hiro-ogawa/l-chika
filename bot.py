@@ -10,6 +10,8 @@ from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 from datetime import datetime
 
+from tinydb import TinyDB, Query
+
 import led
 import sinage
 import metadata_api as mapi
@@ -26,7 +28,6 @@ beacon_dict = {
     '000001939f': 'WD003',
     '0000000000': 'WD004',
 }
-user_dict = {}
 
 # 環境変数が見つかればそっちを読む
 # 見つからなければjsonファイルを読む
@@ -134,11 +135,13 @@ def send_msgs(msgs, reply_token = None, uid = None, uids = None):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    global user_dict
-    global beacon_dict
-    print user_dict
     _id = event.source.user_id
     reply_msgs = []
+
+    f = open("lchika.json")
+    user_dict = json.load(f)
+    f.close()
+
     if(event.message.text[0] == cmd_prefix):
         print('command received')
         cmd = event.message.text[1:]
@@ -375,12 +378,14 @@ def handle_audio_message(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
-    global user_dict
-    global beacon_dict
     _id = event.source.user_id
     reply_msgs = []
     hwid = event.beacon.hwid
     print 'hwid:{}'.format(hwid)
+
+    f = open("lchika.json")
+    user_dict = json.load(f)
+    f.close()
 
     if event.beacon.type == 'enter':
         reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポット{}へ'.format(beacon_dict.get(hwid, 'ID0001'))))
@@ -392,10 +397,11 @@ def handle_beacon_message(event):
         if hwid in user_dict.get(_id, []):
             user_dict[_id] = user_dict.get(_id, []).remove(hwid)
 
-    print user_dict
-
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
+    f = open("lchika.json")
+    json.dump(user_dict, f, indent=2, sort_keys=True, separators=(',', ': '))
+    f.close()
 
 @handler.add(PostbackEvent)
 def handle_postback_message(event):
