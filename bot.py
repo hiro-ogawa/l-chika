@@ -351,7 +351,7 @@ def handle_postback_message(event):
         reply_msgs.append(TextSendMessage(text = u'友達になるためのリンクだよ\nみんなに紹介してね'))
         reply_msgs.append(TextSendMessage(text = line_friend_url))
         img_url = line_qr_url
-        msgs.append(ImageSendMessage(original_content_url=img_url, preview_image_url=img_url))
+        reply_msgs.append(ImageSendMessage(original_content_url=img_url, preview_image_url=img_url))
 
     elif cmd == 'change_music':
         fname = data.get('fname')
