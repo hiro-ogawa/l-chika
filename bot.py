@@ -134,6 +134,8 @@ def send_msgs(msgs, reply_token = None, uid = None, uids = None):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    global user_dict
+    global beacon_dict
     _id = event.source.user_id
     reply_msgs = []
     if(event.message.text[0] == cmd_prefix):
@@ -372,6 +374,8 @@ def handle_audio_message(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
+    global user_dict
+    global beacon_dict
     _id = event.source.user_id
     reply_msgs = []
     hwid = event.beacon.hwid
