@@ -284,7 +284,7 @@ def handle_text_message(event):
             ))
 
         elif cmd == u'ヘルプ':
-            reply_msgs.append(TextSendMessage(text=u'ヘルプはまだないよ'))
+            reply_msgs.append(TextSendMessage(text=u'いいメッセージを投稿するとサイネージに表示されるよ'))
 
     else:
         if False:
@@ -407,7 +407,7 @@ def handle_postback_message(event):
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
 
     elif cmd == 'take_photo':
-        reply_msgs.append(TextSendMessage(text=u'写真取ったよ〜'))
+        reply_msgs.append(TextSendMessage(text=u'写真撮ったよ〜'))
         image_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
         reply_msgs.append(ImageSendMessage(
             original_content_url = image_url,
@@ -415,12 +415,13 @@ def handle_postback_message(event):
         ))
 
     elif cmd == 'take_video':
-        reply_msgs.append(TextSendMessage(text=u'ビデオ取ったよ〜'))
+        reply_msgs.append(TextSendMessage(text=u'動画撮ったよ〜'))
         image_url = 'https://l-chika-bot.azurewebsites.net/img/1481447050.jpg'
         reply_msgs.append(ImageSendMessage(
             original_content_url = image_url,
             preview_image_url = image_url,
         ))
+        reply_msgs.append(TextSendMessage(text=u'これは動画に差し替えます'))
 
     elif event.postback.data == 'bgm:Jhon':
         reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
