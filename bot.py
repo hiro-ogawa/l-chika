@@ -10,8 +10,6 @@ from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 from datetime import datetime
 
-from tinydb import TinyDB, Query
-
 import led
 import sinage
 import metadata_api as mapi
@@ -141,6 +139,7 @@ def handle_text_message(event):
     f = open("lchika.json", "r")
     user_dict = json.load(f)
     f.close()
+    print 'user_dict'
     print user_dict
 
     if(event.message.text[0] == cmd_prefix):
@@ -403,7 +402,7 @@ def handle_beacon_message(event):
 
     print user_dict
     f = open("lchika.json","w")
-    json.dump(user_dict, f, indent=2, sort_keys=True, separators=(',', ': '))
+    json.dump(user_dict, f)
     f.close()
 
 @handler.add(PostbackEvent)
