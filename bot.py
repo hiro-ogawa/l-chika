@@ -139,6 +139,7 @@ def handle_text_message(event):
     f = open("lchika.json", "r")
     user_dict = json.load(f)
     f.close()
+    beacons = user_dict.get(_id,[])
 
     if(event.message.text[0] == cmd_prefix):
         print('command received')
@@ -147,8 +148,7 @@ def handle_text_message(event):
         if False:
             pass
         elif cmd == u'イルミネーション':
-            hwids = user_dict.get(_id,[])
-            if len(hwids) == 0:
+            if len(beacons) == 0:
                 reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
                 send_msgs(reply_msgs, reply_token=event.reply_token)
                 return
@@ -258,8 +258,7 @@ def handle_text_message(event):
 
             ))
         elif cmd == u'サイネージ':
-            hwids = user_dict.get(_id,[])
-            if len(hwids) == 0:
+            if len(beacons) == 0:
                 reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
                 send_msgs(reply_msgs, reply_token=event.reply_token)
                 return
@@ -280,8 +279,7 @@ def handle_text_message(event):
                 )
             ))
         elif cmd == u'記念撮影':
-            hwids = user_dict.get(_id,[])
-            if len(hwids) == 0:
+            if len(beacons) == 0:
                 reply_msgs.append(TextSendMessage(text=u'Lチカスポットに来てね'))
                 send_msgs(reply_msgs, reply_token=event.reply_token)
                 return
@@ -343,7 +341,8 @@ def handle_text_message(event):
 
             if post:
                 reply_msgs.append(TextSendMessage(text=u"投稿したよ"))
-                sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name))
+                for hwid in beacons:
+                    sinage.PostNewMessage(u"{}：{}".format(event.message.text, line_bot_api.get_profile(event.source.user_id).display_name), beacon_dict(hwid))
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
@@ -385,21 +384,21 @@ def handle_beacon_message(event):
     f = open("lchika.json","r")
     user_dict = json.load(f)
     f.close()
-    hwids = user_dict.get(_id, [])
+    beacons = user_dict.get(_id, [])
 
     if event.beacon.type == 'enter':
         reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポット{}へ'.format(beacon_dict.get(hwid, 'ID0001'))))
-        if hwid not in hwids:
-            hwids.append(hwid)
+        if hwid not in beacons:
+            beacons.append(hwid)
 
     elif event.beacon.type == 'leave':
         reply_msgs.append(TextSendMessage(text=u'また来てね'))
-        if hwid in hwids:
-            hwids.remove(hwid)
+        if hwid in beacons:
+            beacons.remove(hwid)
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
-    user_dict[_id] = hwids
+    user_dict[_id] = beacons
     f = open("lchika.json","w")
     json.dump(user_dict, f)
     f.close()
@@ -434,7 +433,8 @@ def handle_postback_message(event):
 
         if fname:
             reply_msgs.append(TextSendMessage(text=u'曲を変えたよ'))
-            sinage.PostNewBGM(fname)
+            for hwid in beacons:
+                sinage.PostNewBGM(fname, beacon_dict(hwid))
 
         else:
             reply_msgs.append(TemplateSendMessage(
@@ -455,7 +455,8 @@ def handle_postback_message(event):
             ))
     elif cmd == 'show_sinage_url':
         reply_msgs.append(TextSendMessage(text=u'サイネージのURLはここだよ\n{}'.format(sinage.base_url)))
-        reply_msgs.append(TextSendMessage(text=u'IDはこれを入れてね\n{}'.format(hwids[0])))
+        for hwid in beacons:
+            reply_msgs.append(TextSendMessage(text=u'IDはこれを入れてね\n{}'.format(beacon_dict(hwid))))
 
     elif cmd == 'take_photo':
         reply_msgs.append(TextSendMessage(text=u'写真撮ったよ〜'))
@@ -475,12 +476,12 @@ def handle_postback_message(event):
         ))
         reply_msgs.append(TextSendMessage(text=u'これはダミーデータです'))
 
-    elif event.postback.data == 'bgm:Jhon':
-        reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
-        sinage.PostNewBGM('happychrismas.mp3')
-    elif event.postback.data == 'bgm:Mariah':
-        reply_msgs.append(TextSendMessage(text=u'音楽をマライア・キャリーの恋人たちのクリスマスにするよ'))
-        sinage.PostNewBGM('christmas.mp3')
+    # elif event.postback.data == 'bgm:Jhon':
+    #     reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
+    #     sinage.PostNewBGM('happychrismas.mp3')
+    # elif event.postback.data == 'bgm:Mariah':
+    #     reply_msgs.append(TextSendMessage(text=u'音楽をマライア・キャリーの恋人たちのクリスマスにするよ'))
+    #     sinage.PostNewBGM('christmas.mp3')
 
     send_msgs(reply_msgs, reply_token=event.reply_token)
 
