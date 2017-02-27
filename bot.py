@@ -299,27 +299,29 @@ def save_content(message_id, filename):
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
     save_content(event.message.id, 'static/' + event.message.id + '.jpg')
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=u'画像ありがと'))
+    reply_msgs = []
+    reply_msgs.append(TextSendMessage(text=u'画像ありがと'))
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 @handler.add(MessageEvent, message=VideoMessage)
 def handle_video_message(event):
     save_content(event.message.id, 'static/' + event.message.id + '.mp4')
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=u'動画ありがと'))
+    reply_msgs = []
+    reply_msgs.append(TextSendMessage(text=u'動画ありがと'))
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
     save_content(event.message.id, 'static/' + event.message.id + '.m4a')
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=u'音声ありがと'))
+    reply_msgs = []
+    reply_msgs.append(TextSendMessage(text=u'音声ありがと'))
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 @handler.add(BeaconEvent)
 def handle_beacon_message(event):
     reply_msgs = []
+    print event.beacon.hwid
+
     if event.beacon.type == 'enter':
         reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポットへ'))
 
@@ -387,8 +389,7 @@ def handle_postback_message(event):
         reply_msgs.append(TextSendMessage(text=u'音楽をマライア・キャリーの恋人たちのクリスマスにするよ'))
         sinage.PostNewBGM('christmas.mp3')
 
-    if len(reply_msgs):
-        line_bot_api.reply_message(event.reply_token, reply_msgs)
+    send_msgs(reply_msgs, reply_token=event.reply_token)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)

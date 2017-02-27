@@ -65,8 +65,8 @@ def negaposi(text):
     }
 
     r = requests.get(negaposi_url, params=payload)
-    print r
-    print urllib.unquote(r.content)
+    # print r
+    # print urllib.unquote(r.content)
     return json.loads(urllib.unquote(r.content))
 
 def emotion(text):
@@ -80,8 +80,8 @@ def emotion(text):
     }
 
     r = requests.get(emotion_url, params=payload)
-    print r
-    print urllib.unquote(r.content)
+    # print r
+    # print urllib.unquote(r.content)
     return json.loads(urllib.unquote(r.content))
 
 from pprint import pprint
@@ -94,7 +94,7 @@ def mext5w1h(text):
     }
 
     r = requests.get(mext5w1h_url, params=payload)
-    print r.content
+    # print r.content
 
     atom = feedparser.parse(r.content)
     # print atom
