@@ -141,6 +141,7 @@ def handle_text_message(event):
     f = open("lchika.json", "r")
     user_dict = json.load(f)
     f.close()
+    print user_dict
 
     if(event.message.text[0] == cmd_prefix):
         print('command received')
