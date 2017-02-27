@@ -17,14 +17,14 @@ import metadata_api as mapi
 app = Flask(__name__)
 
 beacon_dict = {
-    '01002e6fd4': 'WD001',
-    '01013523b2': 'CH001',
-    '0101372b60': 'VL001',
-    '01013ae20c': 'WD002',
-    '01013aebc1': 'CH002',
-    '01013bc66a': 'VL002',
-    '000001939f': 'WD003',
-    '0000000000': 'WD004',
+    '01002e6fd4': 'WD0001',
+    '01013523b2': 'CH0001',
+    '0101372b60': 'VL0001',
+    '01013ae20c': 'WD0002',
+    '01013aebc1': 'CH0002',
+    '01013bc66a': 'VL0002',
+    '000001939f': 'WD0003',
+    '0000000000': 'WD0004',
 }
 
 # 環境変数が見つかればそっちを読む
@@ -439,7 +439,7 @@ def handle_postback_message(event):
         if fname:
             reply_msgs.append(TextSendMessage(text=u'曲を変えたよ'))
             for hwid in beacons:
-                sinage.PostNewBGM(fname, beacon_dict(hwid))
+                sinage.PostNewBGM(fname, beacon_dict.get(hwid, 'ID0001'))
 
         else:
             reply_msgs.append(TemplateSendMessage(
