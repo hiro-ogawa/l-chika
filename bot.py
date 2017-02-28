@@ -315,7 +315,7 @@ def handle_text_message(event):
             ))
 
         elif cmd == u'ヘルプ':
-            reply_msgs.append(TextSendMessage(text=u'いいメッセージを投稿するとサイネージに表示されるよ'))
+            reply_msgs.append(TextSendMessage(text=u'Lチカスポットに行ってテキストを送ってくれるとサイネージに表示するよ！！\n是非いいメッセージを投稿してね！！'))
 
     else:
         if False:
