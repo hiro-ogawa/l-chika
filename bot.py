@@ -379,7 +379,7 @@ def handle_beacon_message(event):
     reply_msgs = []
     hwid = event.beacon.hwid
     # print 'hwid:{}'.format(hwid)
-    print event.beacon
+    print event
 
     f = open("lchika.json","r")
     user_dict = json.load(f)
@@ -387,8 +387,8 @@ def handle_beacon_message(event):
     beacons = user_dict.get(_id, [])
 
     if event.beacon.type == 'enter':
-        reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポット{}へ'.format(beacon_dict.get(hwid, 'ID0001'))))
         if hwid not in beacons:
+            reply_msgs.append(TextSendMessage(text=u'ようこそLチカスポット{}へ'.format(beacon_dict.get(hwid, 'ID0001'))))
             beacons.append(hwid)
 
     elif event.beacon.type == 'leave':
