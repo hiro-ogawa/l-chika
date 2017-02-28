@@ -470,7 +470,7 @@ def handle_postback_message(event):
             original_content_url = image_url,
             preview_image_url = image_url,
         ))
-        reply_msgs.append(TextSendMessage(text=u'これはダミーデータです'))
+        reply_msgs.append(TextSendMessage(text=u'これはIoT x ハードウェアハッカソンでの写真です'))
 
     elif cmd == 'take_video':
         reply_msgs.append(TextSendMessage(text=u'動画撮ったよ〜'))
@@ -479,7 +479,7 @@ def handle_postback_message(event):
             original_content_url = image_url,
             preview_image_url = image_url,
         ))
-        reply_msgs.append(TextSendMessage(text=u'これはダミーデータです'))
+        reply_msgs.append(TextSendMessage(text=u'これはIoT x ハードウェアハッカソンでの写真です'))
 
     # elif event.postback.data == 'bgm:Jhon':
     #     reply_msgs.append(TextSendMessage(text=u'音楽をジョン・レノンのハッピー・クリスマスにするよ'))
