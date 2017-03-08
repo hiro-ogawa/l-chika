@@ -338,6 +338,16 @@ def handle_text_message(event):
                                 ),
                             ]
                         ),
+                        CarouselColumn(
+                            thumbnail_image_url='https://l-chika.herokuapp.com/static/cover.png',
+                            text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
+                            actions=[
+                                URITemplateAction(
+                                    label=u'詳細',
+                                    uri='https://l-chika-bot.azurewebsites.net/'
+                                ),
+                            ]
+                        ),
 
                     ]
                 )
