@@ -348,7 +348,7 @@ def handle_text_message(event):
                 template=CarouselTemplate(
                     columns=[
                         CarouselColumn(
-                            text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
+                            text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！　みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
                             actions=[
                                 URITemplateAction(
                                     label=u'詳細',
