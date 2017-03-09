@@ -343,14 +343,32 @@ def handle_text_message(event):
                 )
 
             ))
-        elif event.message.text == u'カルーセル２':
+            reply_msgs.append(TemplateSendMessage(
+                alt_text=u'AWARDS',
+                template=CarouselTemplate(
+                    columns=[
+                        CarouselColumn(
+                            text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
+                            actions=[
+                                URITemplateAction(
+                                    label=u'詳細',
+                                    uri='https://l-chika-bot.azurewebsites.net/'
+                                ),
+                            ]
+                        ),
+
+                    ]
+                )
+
+            ))
             reply_msgs.append(TemplateSendMessage(
                 alt_text=u'AWARDS',
                 template=CarouselTemplate(
                     columns=[
                         CarouselColumn(
                             thumbnail_image_url='https://l-chika.herokuapp.com/static/cover.png',
-                            text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
+                            title=u'L-Chikaボット',
+                            text=u'みんながLINEで演出家！イルミネーションとデジタルサイネージで素敵な時間を作ろう！！',
                             actions=[
                                 URITemplateAction(
                                     label=u'詳細',
