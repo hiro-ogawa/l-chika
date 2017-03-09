@@ -329,7 +329,7 @@ def handle_text_message(event):
                     columns=[
                         CarouselColumn(
                             thumbnail_image_url='https://l-chika.herokuapp.com/static/cover.png',
-                            title=u'L-Chikaボット',
+                            # title=u'L-Chikaボット',
                             text=u'みんながLINEで演出家！定点カメラで記念撮影！イルミネーションとデジタルサイネージで作る素敵な時間を共有しよう！！',
                             actions=[
                                 URITemplateAction(
